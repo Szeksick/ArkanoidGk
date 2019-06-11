@@ -8,5 +8,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		new LwjglApplication(new ArkanoidGK(), config);
+		config.width = ArkanoidGK.WIDTH;
+		config.height = ArkanoidGK.HEIGHT;
+		config.resizable = false;
 	}
 }
