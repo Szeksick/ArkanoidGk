@@ -12,7 +12,6 @@ import pl.kgdev.arkanoidgk.elements.Bullet;
 import pl.kgdev.arkanoidgk.elements.Paddle;
 import pl.kgdev.arkanoidgk.eventscollisions.BlackHole;
 import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
-import pl.kgdev.arkanoidgk.mobs.Boss;
 import pl.kgdev.arkanoidgk.mobs.SpacePig;
 import pl.kgdev.arkanoidgk.walls.Block;
 import pl.kgdev.arkanoidgk.walls.BlocksArrayCreaor;
@@ -35,7 +34,7 @@ public class Stage3 implements Screen {
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
     private Paddle pad;
 
-    private Texture background = new Texture("bossfight.jpg");
+    private Texture background = new Texture("flappynoid.jpg");
     private Sound music = Gdx.audio.newSound(Gdx.files.internal("stage3.wav"));
     private Sound hitpad = Gdx.audio.newSound(Gdx.files.internal("hit-1.wav"));
     private Sound hitblock = Gdx.audio.newSound(Gdx.files.internal("hit-4.wav"));
@@ -47,8 +46,6 @@ public class Stage3 implements Screen {
     private int stars=5;
     private int ammo;
     private BlackHole blackHole;
-    private Boss boss;
-    private boolean boss_created = false;
 
     public Stage3(ArkanoidGK game, int points, int stars){
         this.game = game;
@@ -205,16 +202,10 @@ public class Stage3 implements Screen {
                 pigs_toremove.add(pig);
             }
         }
-        if(pigs.size()== 0 && pigs_relased && !boss_created){
-            boss = new Boss((ArkanoidGK.WIDTH/2)-(boss.getWidth()/2),ArkanoidGK.HEIGHT+boss.getHeight());
-            boss_created=true;
+        if(pigs.size()== 0 && pigs_relased){
+            this.dispose();
+            game.setScreen(new WinScreen(game, points, stars, 3));
         }
-        /*
-        *   this.dispose();
-        *   game.setScreen(new WinScreen(game, points, stars, 3));
-        *
-        * */
-
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
         * blocks.removeAll(blocks_toremove);

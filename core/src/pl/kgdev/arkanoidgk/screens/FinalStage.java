@@ -33,7 +33,7 @@ public class FinalStage implements Screen {
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
     private Paddle pad;
 
-    private Texture background = new Texture("flappynoid.jpg");
+    private Texture background = new Texture("boss_fight.jpg");
     private Sound music = Gdx.audio.newSound(Gdx.files.internal("stage1.wav"));
     private Sound hitpad = Gdx.audio.newSound(Gdx.files.internal("hit-1.wav"));
     private Sound hitblock = Gdx.audio.newSound(Gdx.files.internal("hit-4.wav"));
