@@ -12,7 +12,7 @@ import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Block extends Rectangle {
+public class Blok extends Rectangle {
     private static final int PIXEL_WIDTH = 40;
     private static final int PIXEL_HEIGHT = 20;
     private int colornumber;
@@ -26,7 +26,7 @@ public class Block extends Rectangle {
     private boolean exploded = false;
 
 
-    public Block(float x, float y){
+    public Blok(float x, float y){
         this.x = x;
         this.y = y;
         this.colornumber = new Random().nextInt(4);
@@ -48,17 +48,21 @@ public class Block extends Rectangle {
     private void explode(ArrayList<Explosion> boomholder){
         boomholder.add(new Explosion(this.x+(this.WALL_WIDTH/2),this.y+(this.WALL_HEIGHT/2)));
     }
+    public int remove(int to_win){
+        to_win--;
+        return to_win;
+    }
 
     public void update(ArrayList<Explosion> boomholder) {
         this.rect.move(this.x, this.y);
-        if(state >= 3){
+        if(this.state == 3){
             this.remove = true;
             if(colornumber == 1 && exploded == false){
                 explode(boomholder);
             }
             this.exploded = true;
-            this.x = -100;
-            this.y = -100;
+//            this.x = -100;
+//            this.y = -100;
         }
     }
 
