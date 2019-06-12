@@ -30,7 +30,7 @@ public class WinScreen implements Screen {
     private static final int PLAYBUTTON_Y= 100;
     private static final int STATBUTTON_Y= 50;
 
-    public WinScreen(ArkanoidGK game, int points, int stars,int endedstage){
+    public WinScreen(ArkanoidGK game, int points, int stars, int endedstage){
         this.game = game;
         this.points = points;
         this.stars=stars;
@@ -91,10 +91,14 @@ public class WinScreen implements Screen {
                 if(Gdx.input.isTouched()){
                     click.play();
                     this.dispose();
-                    switch(endedstage){
+                    System.out.println(endedstage);
+                    switch(this.endedstage){
                         case 1: game.setScreen(new Stage2(game, points, stars));
+                        break;
                         case 2: game.setScreen(new Stage3(game, points, stars));
+                        break;
                         case 3: game.setScreen(new FinalStage(game, points, stars));
+                        break;
                     }
                     music.stop();
                 }
@@ -125,6 +129,5 @@ public class WinScreen implements Screen {
 
     @Override
     public void dispose() {
-
     }
 }

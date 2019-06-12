@@ -133,7 +133,7 @@ public class Stage1 implements Screen {
         }
         if(blocks.size()== blocks_toremove.size()){
             this.dispose();
-            game.setScreen(new WinScreen(game, points, stars, 1));
+            game.setScreen(new WinScreen(game, points, stars,1));
         }
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
@@ -182,9 +182,9 @@ public class Stage1 implements Screen {
 
     @Override
     public void dispose() {
-        music.dispose();
-        blocks.clear();
-        balls.clear();
+        this.music.dispose();
+        this.blocks.clear();
+        this.balls.clear();
 
     }
 }

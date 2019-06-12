@@ -130,6 +130,7 @@ public class Stage2 implements Screen {
             for(SpacePig pig:pigs){
                 if(shot.getCollisionRect().collidesWith(pig.getCollisionRect())){
                     pig.gethit();
+                    points++;
                     shot.gethit();
                 }
             }
@@ -209,7 +210,7 @@ public class Stage2 implements Screen {
                 pigs_toremove.add(pig);
             }
         }
-        if(pigs.size()== 0 && pigs_relased && blocks.size() == blocks_toremove.size()){
+        if(pigs.size() == 0 && pigs_relased && blocks.size() == blocks_toremove.size()){
             this.dispose();
             game.setScreen(new WinScreen(game, points, stars, 2));
         }
@@ -264,10 +265,10 @@ public class Stage2 implements Screen {
 
     @Override
     public void dispose() {
-        music.dispose();
-        blocks.clear();
-        balls.clear();
-        bullets.clear();
+        this.music.dispose();
+        this.blocks.clear();
+        this.balls.clear();
+        this.bullets.clear();
 
 
 

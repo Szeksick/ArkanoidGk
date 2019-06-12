@@ -202,7 +202,7 @@ public class FinalStage implements Screen {
         }
         if(pigs.size()== 0 && pigs_relased){
             this.dispose();
-            game.setScreen(new WinScreen(game, points, stars, 2));
+            game.setScreen(new WinScreen(game, points, stars,4));
         }
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
