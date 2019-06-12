@@ -11,23 +11,28 @@ import pl.kgdev.arkanoidgk.elements.Ball;
 import pl.kgdev.arkanoidgk.elements.Paddle;
 import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
 import pl.kgdev.arkanoidgk.walls.Block;
+import pl.kgdev.arkanoidgk.walls.BlocksArrayCreaor;
+
 import java.util.ArrayList;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
 public class Stage1 implements Screen {
 
-    ArkanoidGK game;
-    ArrayList<Ball> balls = new ArrayList<Ball>();
-    ArrayList<Block> blocks = new ArrayList<Block>();
-    ArrayList<Explosion> boomholder = new ArrayList<Explosion>();
-    Paddle pad;
-    private int to_win = 0;
-    Texture background = new Texture("stars.jpg");
-    Sound music = Gdx.audio.newSound(Gdx.files.internal("stage1.wav"));
-    Sound boom = Gdx.audio.newSound(Gdx.files.internal("bomb.mp3"));
-    Sound hitpad = Gdx.audio.newSound(Gdx.files.internal("hit-1.wav"));
-    Sound hitblock = Gdx.audio.newSound(Gdx.files.internal("hit-4.wav"));
+    private ArkanoidGK game;
+    private ArrayList<Ball> balls = new ArrayList<Ball>();
+    private BlocksArrayCreaor blocksArrayCreaor = new BlocksArrayCreaor();
+    private ArrayList<Block> blocks = blocksArrayCreaor.create();
+    private ArrayList<Explosion> boomholder = new ArrayList<Explosion>();
+    private Paddle pad;
+    private Texture background = new Texture("stars.jpg");
+
+    private Sound music = Gdx.audio.newSound(Gdx.files.internal("stage1.wav"));
+    private Sound hitpad = Gdx.audio.newSound(Gdx.files.internal("hit-1.wav"));
+    private Sound hitblock = Gdx.audio.newSound(Gdx.files.internal("hit-4.wav"));
+    private Kokpit kokpit = new Kokpit();
+    private int points=0;
+    private int stars=5;
 
     public Stage1 (ArkanoidGK game){
         this.game = game;
@@ -38,12 +43,6 @@ public class Stage1 implements Screen {
 
     @Override
     public void show() {
-        for(int i=4;i <10;i++){
-            for(int j = 0; j<12;j++){
-                to_win++;
-                blocks.add(new Block(((ArkanoidGK.WIDTH/12)*j),ArkanoidGK.HEIGHT-((ArkanoidGK.HEIGHT/24)*i)));
-            }
-        }
     }
 
     @Override
@@ -53,11 +52,11 @@ public class Stage1 implements Screen {
             //z blokami
             for(Block block:blocks){
                  if(ball.getCollisionRect().collidesWith(block.getCollisionRect())) {
-                    System.out.println("KOLIZJA PIŁKI Z BLOKIEM");
                     block.gethit();
-//                    if (ball.getY()+ball.getHeight() < block.getY() || ball.getY() > block.getY()+block.getHeight()) {
+                    points++;
+                    if (ball.getY()+ball.getHeight() < block.getY() || ball.getY() > block.getY()+block.getHeight()) {
                          ball.reverseYdir();
-//                    }
+                    }
                     hitblock.play();
                     if (ball.getX() < block.getX() || ball.getX() > block.getX()+block.getWidth()) {
                         ball.reverseXdir();
@@ -66,7 +65,6 @@ public class Stage1 implements Screen {
             }
             //z paletka
             if(ball.getCollisionRect().collidesWith(pad.getCollisionRect())){
-                    System.out.print("KOLIZJA PIŁKI Z PALETKĄ");
                 if(ball.getY() > pad.getY()+pad.getHeight()){
                     ball.reverseYdir();
                 }
@@ -78,58 +76,86 @@ public class Stage1 implements Screen {
             ball.move();
         }
 
-        //Sterowanie paletka
-        if (Gdx.input.isKeyPressed(R)){
-                   for(Ball b : balls) b.resetState();
+        //CHEATY
+        if(Gdx.input.isKeyJustPressed(M)){
+            this.dispose();
+            game.setScreen(new Stage2(game, points, stars));
+        }else if(Gdx.input.isKeyJustPressed(N)){
+            this.dispose();
+            game.setScreen(new Stage3(game, points, stars));
+        }else if(Gdx.input.isKeyJustPressed(B)){
+            this.dispose();
+            game.setScreen(new Stage3(game, points, stars));
         }
-        if (Gdx.input.isKeyPressed(UP)) {
-            pad.moveUp();
-        } else if (Gdx.input.isKeyPressed(DOWN)) {
-            pad.moveDown();
-        } else if (Gdx.input.isKeyPressed(LEFT)) {
+
+
+        //Sterowanie paletka
+        if (Gdx.input.isKeyJustPressed(X) && stars >0){
+            balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
+            stars--;
+        }
+        if (Gdx.input.isKeyPressed(LEFT)) {
             if(pad.getX() > 0){ pad.moveLeft();}
         } else if (Gdx.input.isKeyPressed(RIGHT)) {
             if(pad.getX()< (ArkanoidGK.WIDTH-pad.getWidth())){pad.moveRight();}
+        }
+//       Usuwanie piłek
+        ArrayList<Ball> balls_toremove = new ArrayList<Ball>();
+        for(Ball ball:balls){
+          if(ball.getY()<0){
+                balls_toremove.add(ball);
+            }
+        }
+
+        //update wybuchow
+        ArrayList<Explosion> exploend = new ArrayList<Explosion>();
+        for(Explosion boom: boomholder){
+           for(Block block:blocks){
+                if (boom.getCollisionRect().collidesWith(block.getCollisionRect())) {
+                    block.gethit();
+                    points++;
+                }
+            }
+            boom.update(delta);
+        //jezeli ekplozja zmienila flage remove na true to dodaje do listy bombydousuniecia
+            if(boom.remove) {
+                exploend.add(boom);
+            }
         }
 
         //Usuwanie zniszczonych blokow
         ArrayList<Block> blocks_toremove = new ArrayList<Block>();
         for(Block block:blocks){
             block.update(boomholder);
-//            if(block.remove){
-//                blocks_toremove.add(block);
-//            }
-        }
-        //update wybuchow
-        ArrayList<Explosion> exploend = new ArrayList<Explosion>();
-        for(Explosion boom: boomholder){
-            boom.update(delta);
-//            jezeli bomba zmienila flage remove na true to dodaje do listy bombydousuniecia
-            if(boom.remove) {
-                exploend.add(boom);
+            if(block.remove){
+                blocks_toremove.add(block);
             }
         }
-//        System.out.println("bloki do usuniecia: "+blocks_toremove.size());
-//        System.out.println("Przed usunieciem:"+blocks.size());
-//        blocks.removeAll(blocks_toremove);
-//        System.out.println("Po usunieciu:"+blocks.size());
+        if(blocks.size()== blocks_toremove.size()){
+            this.dispose();
+            game.setScreen(new WinScreen(game, points, stars, 1));
+        }
+        /*
+        * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
+        * blocks.removeAll(blocks_toremove);
+        */
+        balls.removeAll(balls_toremove);
         boomholder.removeAll(exploend);
         //Czyszczenie ekranu
         Gdx.gl.glClearColor(130/255f, 130/255f, 130/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //Rysowanie elementow
         game.batch.begin();
-        game.font.setColor(Color.GREEN);
         game.batch.draw(background,0,0,ArkanoidGK.WIDTH, ArkanoidGK.HEIGHT);
-        game.font.draw(game.batch,"Punkty : ",150,25);
-        game.font.draw(game.batch,"ZYCIE : ",300,25);
-        game.font.setColor(Color.RED);
-        game.font.draw(game.batch,Integer.toString(20),360,25);
-        game.font.draw(game.batch,"POZIOM 1",360,ArkanoidGK.HEIGHT-50);
         pad.render(this.game.batch);
+        if(balls.size()==0){
+            game.font.setColor(Color.WHITE);
+            game.font.draw(game.batch,"Aby stworzyć nowa gwiazdę wciśnij X",(ArkanoidGK.WIDTH/2)-100,ArkanoidGK.HEIGHT/2);
+        }
         for(Ball ball:balls) ball.render(this.game.batch);
         for(Block block:blocks) block.render(this.game.batch);
         for(Explosion boom: boomholder) boom.render(this.game.batch);
+        kokpit.draw(this.game,1,points,stars);
         game.batch.end();
 
     }
@@ -156,6 +182,9 @@ public class Stage1 implements Screen {
 
     @Override
     public void dispose() {
+        music.dispose();
+        blocks.clear();
+        balls.clear();
 
     }
 }

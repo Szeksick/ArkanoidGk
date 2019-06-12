@@ -5,12 +5,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import pl.kgdev.arkanoidgk.ArkanoidGK;
 import pl.kgdev.arkanoidgk.eventscollisions.CollisionRect;
 
 import java.util.Random;
 
 public class SpacePig {
-    public static float SPEED = 40;
+    public static float SPEED = 200;
     public static final float SPEED_ANIMATION = 0.5f;
     public static final int PIXEL_WIDTH = 31;
     public static final int PIXEL_HEIGHT = 29;
@@ -18,8 +19,8 @@ public class SpacePig {
     public static final int HEIGHT = 40;
     private float delta = Gdx.graphics.getDeltaTime();
     private int MOVE_TIMER = 1;
-    public int state;//1 odliczanie, 2 ruch, 3 śmierć
-    public int HIT_POINTS;
+    public boolean remove = false;
+    public int HIT_POINTS = 10;
     public boolean RIGHT_BLOCKED = false;
     public boolean LEFT_BLOCKED = false;
     public boolean UP_BLOCKED = false;
@@ -34,11 +35,12 @@ public class SpacePig {
     int move;
     float moveTimer;
     float stateTime;
+    private float vx, vy;
 
 
     public SpacePig(float x, float y){
-        this.x = x;//50*Math.round(x/50);
-        this.y = y;//50*Math.round(y/50);
+        this.x = x;
+        this.y = y;
         this.rect = new CollisionRect(x,y,WIDTH, HEIGHT);
         move = 1;
         moveDirection =1;
@@ -51,62 +53,77 @@ public class SpacePig {
         moves[1] = new Animation(SPEED_ANIMATION, moveSpriteSheet[1]);//w lewo
         moves[2] = new Animation(SPEED_ANIMATION, moveSpriteSheet[2]);//w prawo
         moves[3] = new Animation(SPEED_ANIMATION, moveSpriteSheet[3]);//w gore
-
-
-
     }
 
-    public void kierunek(){
+    public void direction(){
         MOVE_TIMER++;
-        if(MOVE_TIMER >= 240) {
+        if(MOVE_TIMER >= 20) {
             moveDirection = new Random().nextInt(4)+1;
             MOVE_TIMER = 1;
         }
     }
-    public void odwrot(){
+    public void reverse(){
         if(moveDirection == 1) moveDirection=2;
         if(moveDirection == 2) moveDirection=1;
         if(moveDirection == 3) moveDirection=4;
         if(moveDirection == 4) moveDirection=3;
     }
     public void moveRight(){
-        if(this.RIGHT_BLOCKED == false) this.x += SPEED * Gdx.graphics.getDeltaTime();
+        if(this.RIGHT_BLOCKED == false){
+            this.x += SPEED * Gdx.graphics.getDeltaTime();
+        }else{
+            reverse();
+        }
         move = 2;
         stateTime += delta / SPEED_ANIMATION;
     }
     public void moveLeft(){
-        if(this.LEFT_BLOCKED == false) this.x -= SPEED * Gdx.graphics.getDeltaTime();
+        if(this.LEFT_BLOCKED == false){
+            this.x -= SPEED * Gdx.graphics.getDeltaTime();
+        }else{
+        reverse();
+        }
         move = 1;
         stateTime += delta / SPEED_ANIMATION;
     }
     public void moveUp(){
-        if(this.UP_BLOCKED == false) this.y += SPEED * Gdx.graphics.getDeltaTime();
+        if(this.UP_BLOCKED == false){
+            this.y += SPEED * Gdx.graphics.getDeltaTime();
+        }else{
+            reverse();
+        }
         move = 3;
         stateTime += delta / SPEED_ANIMATION;
     }
     public void moveDown(){
-        if(this.DOWN_BLOCKED == false) this.y -= SPEED * Gdx.graphics.getDeltaTime();
+        if(this.DOWN_BLOCKED == false){
+            this.y -= SPEED * Gdx.graphics.getDeltaTime();
+        }else{
+            reverse();
+        }
         move = 0;
         stateTime += delta / SPEED_ANIMATION;
     }
 
     private void ruch() {
-        kierunek();
-        if(moveDirection == 1) this.moveUp();
-        if(moveDirection == 2) this.moveDown();
-        if(moveDirection == 3) this.moveLeft();
-        if(moveDirection == 4) this.moveRight();
+        this.direction();
+        if(moveDirection == 1 && this.y < ArkanoidGK.HEIGHT-HEIGHT)this.moveUp();
+        if(moveDirection == 2 && this.y > HEIGHT+200) this.moveDown();
+        if(moveDirection == 3 && this.x > WIDTH) this.moveLeft();
+        if(moveDirection == 4 && this.x < ArkanoidGK.WIDTH-WIDTH) this.moveRight();
     }
     public void render(SpriteBatch batch) {
         batch.draw((TextureRegion) moves[move].getKeyFrame(stateTime,true),x,y,WIDTH,HEIGHT);
     }
 
     private void dead() {
-        state=3;
-
+        remove = true;
+    }
+    public void gethit(){
+        HIT_POINTS--;
     }
 
-    public void update(float delta) {
+    public void update() {
         ruch();
         rect.move(this.x, this.y);
         RIGHT_BLOCKED = false;

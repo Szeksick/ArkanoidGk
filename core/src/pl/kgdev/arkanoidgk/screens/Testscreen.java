@@ -11,6 +11,7 @@ import pl.kgdev.arkanoidgk.elements.Ball;
 import pl.kgdev.arkanoidgk.elements.Bullet;
 import pl.kgdev.arkanoidgk.elements.Paddle;
 import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
+import pl.kgdev.arkanoidgk.mobs.SpacePig;
 import pl.kgdev.arkanoidgk.walls.Block;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Testscreen implements Screen {
     ArrayList<Ball> balls = new ArrayList<Ball>();
     ArrayList<Block> blocks = new ArrayList<Block>();
     ArrayList<Bullet> bullets = new ArrayList<Bullet>();
+    ArrayList<SpacePig> pigs = new ArrayList<SpacePig>();
     ArrayList<Explosion> boomholder = new ArrayList<Explosion>();
     Paddle pad;
     private int to_win = 0;
@@ -45,12 +47,12 @@ public class Testscreen implements Screen {
 
     @Override
     public void show() {
-        for(int i=4;i <10;i++){
-            for(int j = 0; j<12;j++){
-                to_win++;
-                blocks.add(new Block(((ArkanoidGK.WIDTH/12)*j),ArkanoidGK.HEIGHT-((ArkanoidGK.HEIGHT/24)*i)));
-            }
-        }
+//        for(int i=4;i <10;i++){
+//            for(int j = 0; j<12;j++){
+//                to_win++;
+//                blocks.add(new Block(((ArkanoidGK.WIDTH/12)*j),ArkanoidGK.HEIGHT-((ArkanoidGK.HEIGHT/24)*i)));
+//            }
+//        }
     }
 
     @Override
@@ -98,7 +100,23 @@ public class Testscreen implements Screen {
         } else if (Gdx.input.isKeyPressed(RIGHT)) {
             if(pad.getX()< (ArkanoidGK.WIDTH-pad.getWidth())){pad.moveRight();}
         }
-
+//        pigs
+        if (Gdx.input.isKeyPressed(P)){
+                pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
+        }
+        ArrayList<SpacePig> pigs_toremove = new ArrayList<SpacePig>();
+        for(SpacePig pig: pigs){
+            pig.update();
+            for(Block block:blocks){
+                if(pig.getCollisionRect().collidesWith(block.getCollisionRect())){
+                    pig.reverse();
+                }
+            }
+            if(pig.remove) {
+                pigs_toremove.add(pig);
+            }
+        }
+//        pigs end
         //bullets
         if (Gdx.input.isKeyPressed(R)){
             ammo += 10;
@@ -106,8 +124,8 @@ public class Testscreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(SPACE)){
             if(ammo > 0) {
-                bullets.add(new Bullet(pad.getX()+5, pad.getY() + pad.getHeight()));
-                bullets.add(new Bullet(pad.getX() + pad.getWidth() - 5, pad.getY() + pad.getHeight()));
+                bullets.add(new Bullet(pad.getX()+5, pad.getY()));
+                bullets.add(new Bullet(pad.getX() + pad.getWidth() - 5, pad.getY()));
                 ammo--;
             }else{
                 click.play();
@@ -147,9 +165,10 @@ public class Testscreen implements Screen {
 //        System.out.println("bloki do usuniecia: "+blocks_toremove.size());
 //        System.out.println("Przed usunieciem:"+blocks.size());
 //        blocks.removeAll(blocks_toremove);
-//        System.out.println("Po usunieciu:"+blocks.size());
+        System.out.println("Swinie na ekranie:"+pigs.size());
         boomholder.removeAll(exploend);
         bullets.removeAll(bullets_toremove);
+        pigs.removeAll(pigs_toremove);
         //Czyszczenie ekranu
         Gdx.gl.glClearColor(130/255f, 130/255f, 130/255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -167,6 +186,7 @@ public class Testscreen implements Screen {
         for(Block block:blocks) block.render(this.game.batch);
         for(Explosion boom: boomholder) boom.render(this.game.batch);
         for(Bullet shot:bullets) shot.render(this.game.batch);
+        for(SpacePig pig:pigs) pig.render(this.game.batch);
         game.batch.end();
 
     }

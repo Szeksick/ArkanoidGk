@@ -12,7 +12,7 @@ public class Paddle extends Image {
     private static final float SPEED_ANIMATION = 0.5f;
     private static final int PIXEL_WIDTH = 64;
     private static final int PIXEL_HEIGHT = 64;
-    Texture texture = new Texture("playA.png");
+    Texture texture = new Texture("pad.png");
     private final int WIDTH = texture.getWidth();
     private final int HEIGHT = texture.getHeight();
     private int move;
@@ -31,16 +31,16 @@ public class Paddle extends Image {
         this.x = x;
         this.y = y;
         this.SPEED = speed;
-        this.x = 50*Math.round(x/50);;
-        this.y = 50*Math.round(y/50);;
+        this.x = 50*Math.round(x/50);
+        this.y = 50*Math.round(y/50);
         this.rect = new CollisionRect(this.x,this.y,WIDTH, HEIGHT);
         move = 1;
     }
     public Paddle(float x, float y){
         this.x = x;
         this.y = y;
-        this.x = 50*Math.round(x/50);;
-        this.y = 50*Math.round(y/50);;
+        this.x = 50*Math.round(x/50);
+        this.y = 50*Math.round(y/50);
         this.rect = new CollisionRect(this.x,this.y,WIDTH, HEIGHT);
         move = 1;
     }

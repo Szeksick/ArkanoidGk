@@ -18,7 +18,9 @@ public class Menuscreen implements Screen {
     Texture exitButtonInactive;
     Texture background;
     Texture logo;
+    Texture pad;
     private int bgmoveY = -(ArkanoidGK.HEIGHT*4);
+    private int padmoveY = -(ArkanoidGK.HEIGHT*10);
     Sound music = Gdx.audio.newSound(Gdx.files.internal("menu.wav"));
     Sound hover = Gdx.audio.newSound(Gdx.files.internal("hover1.wav"));
     Sound click = Gdx.audio.newSound(Gdx.files.internal("decide.mp3"));
@@ -30,6 +32,7 @@ public class Menuscreen implements Screen {
 
     public Menuscreen(ArkanoidGK game){
         this.game = game;
+        pad = new Texture("pad.png");
         logo = new Texture("arkanoidlogo.png");
         playButonActive = new Texture("START.png");
         playButtonInacitve= new Texture("START-1.png");
@@ -55,8 +58,10 @@ public class Menuscreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
         bgmoveY++;
+        padmoveY+=5;
         if(bgmoveY == 0) bgmoveY=-(ArkanoidGK.HEIGHT*4);
         game.batch.draw(background, 0, bgmoveY, ArkanoidGK.WIDTH, ArkanoidGK.HEIGHT * 6);
+        game.batch.draw(pad, 100, padmoveY, pad.getWidth(), pad.getHeight());
         //rysowanie buttonow
         game.batch.draw(exitButtonInactive, (ArkanoidGK.WIDTH / 2 - BUTTON_WIDTH / 2), EXITBUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
         game.batch.draw(statsButtonInactive, (ArkanoidGK.WIDTH / 2 - BUTTON_WIDTH / 2), STATBUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -90,7 +95,7 @@ public class Menuscreen implements Screen {
                 if(Gdx.input.isTouched()){
                     click.play();
                     this.dispose();
-                    game.setScreen(new Testscreen(game));
+                    game.setScreen(new Stage1(game));
                     music.stop();
                 }
             }

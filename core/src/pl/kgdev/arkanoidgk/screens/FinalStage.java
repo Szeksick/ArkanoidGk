@@ -3,7 +3,6 @@ package pl.kgdev.arkanoidgk.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import pl.kgdev.arkanoidgk.ArkanoidGK;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
-public class Stage3 implements Screen {
+public class FinalStage implements Screen {
 
     private ArkanoidGK game;
     private ArrayList<Ball> balls = new ArrayList<Ball>();
@@ -47,7 +46,7 @@ public class Stage3 implements Screen {
     private int ammo;
     private BlackHole blackHole;
 
-    public Stage3(ArkanoidGK game, int points, int stars){
+    public FinalStage(ArkanoidGK game, int points, int stars){
         this.game = game;
         this.points = points;
         this.stars += stars;

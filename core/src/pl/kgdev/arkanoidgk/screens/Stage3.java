@@ -10,32 +10,32 @@ import pl.kgdev.arkanoidgk.ArkanoidGK;
 import pl.kgdev.arkanoidgk.elements.Ball;
 import pl.kgdev.arkanoidgk.elements.Bullet;
 import pl.kgdev.arkanoidgk.elements.Paddle;
+import pl.kgdev.arkanoidgk.eventscollisions.BlackHole;
 import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
 import pl.kgdev.arkanoidgk.mobs.SpacePig;
 import pl.kgdev.arkanoidgk.walls.Block;
 import pl.kgdev.arkanoidgk.walls.BlocksArrayCreaor;
 
-import java.applet.AudioClip;
 import java.util.ArrayList;
 
 import static com.badlogic.gdx.Input.Keys.*;
 
-public class Stage2 implements Screen {
+public class Stage3 implements Screen {
 
     private ArkanoidGK game;
     private ArrayList<Ball> balls = new ArrayList<Ball>();
     private BlocksArrayCreaor blocksArrayCreaor = new BlocksArrayCreaor();
-    private ArrayList<Block> blocks = blocksArrayCreaor.create();
+    private ArrayList<Block> blocks = new ArrayList<Block>();
     private ArrayList<Explosion> boomholder = new ArrayList<Explosion>();
     private ArrayList<SpacePig> pigs = new ArrayList<SpacePig>();
-    private boolean allow_pigs = false;
+    private boolean allow_pigs = true;
     private boolean pigs_relased = false;
 
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
     private Paddle pad;
 
-    private Texture background = new Texture("stars.jpg");
-    private Sound music = Gdx.audio.newSound(Gdx.files.internal("stage1.wav"));
+    private Texture background = new Texture("flappynoid.jpg");
+    private Sound music = Gdx.audio.newSound(Gdx.files.internal("stage3.wav"));
     private Sound hitpad = Gdx.audio.newSound(Gdx.files.internal("hit-1.wav"));
     private Sound hitblock = Gdx.audio.newSound(Gdx.files.internal("hit-4.wav"));
     private Sound click = Gdx.audio.newSound(Gdx.files.internal("hover.wav"));
@@ -45,13 +45,14 @@ public class Stage2 implements Screen {
     private int points=0;
     private int stars=5;
     private int ammo;
+    private BlackHole blackHole;
 
-    public Stage2(ArkanoidGK game,int points,int stars){
+    public Stage3(ArkanoidGK game, int points, int stars){
         this.game = game;
         this.points = points;
         this.stars += stars;
         pad = new Paddle(ArkanoidGK.WIDTH/2,50,450);
-        balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
+//        balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
         music.loop(30);
     }
 
@@ -66,7 +67,6 @@ public class Stage2 implements Screen {
             //z blokami
             for(Block block:blocks){
                  if(ball.getCollisionRect().collidesWith(block.getCollisionRect())) {
-                    System.out.println("KOLIZJA PIŁKI Z BLOKIEM");
                     block.gethit();
                     points++;
                     if (ball.getY()+ball.getHeight() < block.getY() || ball.getY() > block.getY()+block.getHeight()) {
@@ -80,7 +80,6 @@ public class Stage2 implements Screen {
             }
             //z paletka
             if(ball.getCollisionRect().collidesWith(pad.getCollisionRect())){
-                    System.out.print("KOLIZJA PIŁKI Z PALETKĄ");
                 if(ball.getY() > pad.getY()+pad.getHeight()){
                     ball.reverseYdir();
                 }
@@ -93,13 +92,12 @@ public class Stage2 implements Screen {
         }
 
         /*
-
         Sterowanie paletką i strzelanie
         */
-        if (Gdx.input.isKeyJustPressed(X) && stars >0){
-            balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
-            stars--;
-        }
+//        if (Gdx.input.isKeyJustPressed(X) && stars >0){
+//            balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
+//            stars--;
+//        }
         if (Gdx.input.isKeyPressed(LEFT)) {
             if(pad.getX() > 0){ pad.moveLeft();}
         } else if (Gdx.input.isKeyPressed(RIGHT)) {
@@ -179,14 +177,13 @@ public class Stage2 implements Screen {
             allow_pigs = true;
         }
         if(allow_pigs && !pigs_relased){
-            pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
-            pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
-            pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
-            pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
-            pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
+            blackHole = new BlackHole(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2);
+            for(int i =0; i <200;i++ ) pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
             pigs_spawn.play();
             pigs_relased = true;
-        } ArrayList<SpacePig> pigs_toremove = new ArrayList<SpacePig>();
+        }
+        if(pigs_relased)blackHole.update(delta);
+        ArrayList<SpacePig> pigs_toremove = new ArrayList<SpacePig>();
         for(SpacePig pig: pigs){
             pig.update();
 
@@ -222,16 +219,17 @@ public class Stage2 implements Screen {
         game.batch.begin();
         game.batch.draw(background,0,0,ArkanoidGK.WIDTH, ArkanoidGK.HEIGHT);
         pad.render(this.game.batch);
-        if(balls.size()==0 && !pigs_relased){
-            game.font.setColor(Color.WHITE);
-            game.font.draw(game.batch,"Aby stworzyć nową gwiazdę wciśnij X",(ArkanoidGK.WIDTH/2)-100,ArkanoidGK.HEIGHT/2);
-        }
+//        if(balls.size()==0 && !pigs_relased){
+//            game.font.setColor(Color.WHITE);
+//            game.font.draw(game.batch,"Aby stworzyć nowa gwiazdę wciśnij X",(ArkanoidGK.WIDTH/2)-100,ArkanoidGK.HEIGHT/2);
+//        }
         for(Ball ball:balls) ball.render(this.game.batch);
         for(SpacePig pig:pigs) pig.render(this.game.batch);
         for(Block block:blocks) block.render(this.game.batch);
         for(Bullet shot:bullets) shot.render(this.game.batch);
         for(Explosion boom: boomholder) boom.render(this.game.batch);
-        kokpit.draw(this.game,2,points, stars);
+        if(pigs_relased && !blackHole.remove) blackHole.render(this.game.batch);
+        kokpit.draw(this.game,3,points, stars);
         game.batch.end();
 
     }
@@ -259,6 +257,8 @@ public class Stage2 implements Screen {
     @Override
     public void dispose() {
         music.dispose();
-
+        blocks.clear();
+        balls.clear();
+        bullets.clear();
     }
 }

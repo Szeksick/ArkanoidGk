@@ -29,9 +29,7 @@ public class Explosion {
         this.rect = new CollisionRect(this.x,this.y,WIDTH, HEIGHT);
         boom_timer = 0;
         ticks = new Animation[1];
-//        TextureRegion[][] moveSpriteSheet = TextureRegion.split(new Texture("boom.png"), 78, 78);
         texture = new Texture("boom.png");
-//        ticks[0] = new Animation(SPEED_ANIMATION, moveSpriteSheet[0]);
         explode.play();
     }
 

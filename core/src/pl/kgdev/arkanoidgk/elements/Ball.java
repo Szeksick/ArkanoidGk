@@ -11,7 +11,7 @@ import pl.kgdev.arkanoidgk.eventscollisions.CollisionRect;
 
 public class Ball extends Image {
     private float SPEED = 150;
-    Texture texture = new Texture("ball.png");
+    Texture texture = new Texture("ball_1.png");
     private final int SIZE = 16;
     private float x, y,startx, starty;
     double vx, vy;
@@ -29,7 +29,7 @@ public class Ball extends Image {
         this.starty=y;
         this.x = 50*Math.round(x/50);
         this.y = 50*Math.round(y/50);
-        this.rect = new CollisionRect(this.x,this.y,SIZE, SIZE);
+        this.rect = new CollisionRect(this.x,this.y,SIZE, SIZE-4);
         this.vx = -0.5;
         this.vy = -1;
         rev_timer = 0;
@@ -42,7 +42,7 @@ public class Ball extends Image {
         this.SPEED = speed;
         this.x = 50*Math.round(x/50);
         this.y = 50*Math.round(y/50);
-        this.rect = new CollisionRect(this.x,this.y,SIZE, SIZE);
+        this.rect = new CollisionRect(this.x,this.y,SIZE, SIZE-4);
         this.vx = -0.5;
         this.vy = -1;
         rev_timer = 0;
@@ -87,7 +87,7 @@ public class Ball extends Image {
 
     public void render(SpriteBatch batch) {
 
-        batch.draw(texture,x,y,SIZE,SIZE);
+        batch.draw(texture,x,y,SIZE,SIZE-4);
     }
     private void update(){
         if(rev_timer >= REV_WAIT_TIMER){
