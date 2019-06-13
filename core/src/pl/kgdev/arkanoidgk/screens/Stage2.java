@@ -32,12 +32,14 @@ public class Stage2 implements Screen {
     private BlackHole blackHole;
     private boolean allow_pigs = false;
     private boolean pigs_relased = false;
+    private boolean drawmsg = false;
 
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
     private Paddle pad;
-
     private Texture background = new Texture("menubg.jpeg");
+    private Texture msg = new Texture("COMPONENT.png");
     private Sound music = Gdx.audio.newSound(Gdx.files.internal("stage1.wav"));
+    private Sound music2 = Gdx.audio.newSound(Gdx.files.internal("stage3.wav"));
     private Sound hitpad = Gdx.audio.newSound(Gdx.files.internal("hit-1.wav"));
     private Sound hitblock = Gdx.audio.newSound(Gdx.files.internal("hit-4.wav"));
     private Sound click = Gdx.audio.newSound(Gdx.files.internal("hover.wav"));
@@ -47,6 +49,8 @@ public class Stage2 implements Screen {
     private int points=0;
     private int stars=5;
     private int ammo;
+    private boolean win = false;
+
 
     public Stage2(ArkanoidGK game,int points,int stars){
         this.game = game;
@@ -105,9 +109,10 @@ public class Stage2 implements Screen {
         } else if (Gdx.input.isKeyPressed(RIGHT)) {
             if(pad.getX()< (ArkanoidGK.WIDTH-pad.getWidth())){pad.moveRight();}
         }
-        if (pigs_relased && Gdx.input.isKeyPressed(R)){
+        if (pigs_relased && Gdx.input.isKeyJustPressed(R)){
             ammo += 20;
             restock.play();
+            drawmsg = false;
         }
         if (Gdx.input.isKeyJustPressed(SPACE)){
             if(ammo > 0) {
@@ -175,13 +180,16 @@ public class Stage2 implements Screen {
         }
         /*
         * UWAGA swinie!
-        * Jezeli na planszy pozostanie 6 blokow to uwolnione zostają kosmiczne swinie
+        * Jezeli na planszy pozostanie 15 blokow to uwolnione zostają kosmiczne swinie
         * Agresywan rasa ufo ktora latajac haotycznie sporbuje ukrasc pozostale na statku gwiazdy
         */
         if(blocks.size()<= blocks_toremove.size()+15){
             allow_pigs = true;
         }
         if(allow_pigs && !pigs_relased){
+            music.stop();
+            music2.loop();
+            pad.setSkin(2);
             blackHole = new BlackHole(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2);
             pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
             pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
@@ -190,6 +198,7 @@ public class Stage2 implements Screen {
             pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
             pigs_spawn.play();
             pigs_relased = true;
+            drawmsg = true;
         }
         if(pigs_relased)blackHole.update(delta);
         ArrayList<SpacePig> pigs_toremove = new ArrayList<SpacePig>();
@@ -211,8 +220,17 @@ public class Stage2 implements Screen {
             }
         }
         if(pigs.size() == 0 && pigs_relased && blocks.size() == blocks_toremove.size()){
+            win = true;
             this.dispose();
             game.setScreen(new WinScreen(game, points, stars, 2));
+        }
+        /*
+         * Jezeli niema juz pilek  zapasie i na planszy
+         * PRZEGRANA
+         * */
+        if(balls.size()==0 && stars==0 && !win && pigs_relased && pigs.size()==0){
+            this.dispose();
+            game.setScreen(new UlooseScreen(game, points, stars,2));
         }
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
@@ -238,6 +256,7 @@ public class Stage2 implements Screen {
         for(Bullet shot:bullets) shot.render(this.game.batch);
         for(Explosion boom: boomholder) boom.render(this.game.batch);
         if(pigs_relased && !blackHole.remove) blackHole.render(this.game.batch);
+        if(drawmsg) game.batch.draw(msg,ArkanoidGK.WIDTH-msg.getWidth(), 25);
         kokpit.draw(this.game,2,points, stars);
         game.batch.end();
 
@@ -266,6 +285,7 @@ public class Stage2 implements Screen {
     @Override
     public void dispose() {
         this.music.dispose();
+        this.music2.dispose();
         this.blocks.clear();
         this.balls.clear();
         this.bullets.clear();

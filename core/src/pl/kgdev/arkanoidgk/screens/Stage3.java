@@ -46,12 +46,14 @@ public class Stage3 implements Screen {
     private int stars=5;
     private int ammo;
     private BlackHole blackHole;
+    private boolean win = false;
 
     public Stage3(ArkanoidGK game, int points, int stars){
         this.game = game;
         this.points = points;
         this.stars += stars;
         pad = new Paddle(ArkanoidGK.WIDTH/2,50,450);
+        pad.setSkin(2);
 //        balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
         music.loop(30);
     }
@@ -103,7 +105,7 @@ public class Stage3 implements Screen {
         } else if (Gdx.input.isKeyPressed(RIGHT)) {
             if(pad.getX()< (ArkanoidGK.WIDTH-pad.getWidth())){pad.moveRight();}
         }
-        if (Gdx.input.isKeyPressed(R)){
+        if (Gdx.input.isKeyJustPressed(R)){
             ammo += 10;
             restock.play();
         }
@@ -203,8 +205,17 @@ public class Stage3 implements Screen {
             }
         }
         if(pigs.size()== 0 && pigs_relased){
+            win = true;
             this.dispose();
             game.setScreen(new WinScreen(game, points, stars, 3));
+        }
+        /*
+         * Jezeli niema juz pilek  zapasie i na planszy
+         * PRZEGRANA
+         * */
+        if(balls.size()==0 && stars==0 && !win && pigs_relased && pigs.size()==0){
+            this.dispose();
+            game.setScreen(new UlooseScreen(game, points, stars,3));
         }
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja

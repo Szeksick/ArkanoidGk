@@ -32,7 +32,7 @@ public class Menuscreen implements Screen {
 
     public Menuscreen(ArkanoidGK game){
         this.game = game;
-        pad = new Texture("pad.png");
+        pad = new Texture("pad1.png");
         logo = new Texture("arkanoidlogo.png");
         playButonActive = new Texture("START.png");
         playButtonInacitve= new Texture("START-1.png");

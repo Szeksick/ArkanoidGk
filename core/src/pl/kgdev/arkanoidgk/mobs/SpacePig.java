@@ -13,8 +13,8 @@ import java.util.Random;
 public class SpacePig {
     public static float SPEED = 200;
     public static final float SPEED_ANIMATION = 0.5f;
-    public static final int PIXEL_WIDTH = 31;
-    public static final int PIXEL_HEIGHT = 29;
+    public static final int PIXEL_WIDTH = 51;
+    public static final int PIXEL_HEIGHT = 52;
     public static final int WIDTH = 40;
     public static final int HEIGHT = 40;
     private float delta = Gdx.graphics.getDeltaTime();

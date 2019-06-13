@@ -69,6 +69,14 @@ public class Paddle extends Image {
 //        stateTime += delta / SPEED_ANIMATION;
     }
 
+    public void setSkin(int h){
+        if(h==1){
+            texture = new Texture("pad.png");
+        }else{
+            texture = new Texture("pad1.png");
+        }
+    }
+
     public void render(SpriteBatch batch) {
 //        batch.draw((TextureRegion) moves[move].getKeyFrame(stateTime,true),x,y,WIDTH+10,HEIGHT+10);
         batch.draw(texture,x,y,texture.getWidth(),texture.getHeight());

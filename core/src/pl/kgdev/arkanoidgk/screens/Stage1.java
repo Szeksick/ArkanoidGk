@@ -33,6 +33,7 @@ public class Stage1 implements Screen {
     private Kokpit kokpit = new Kokpit();
     private int points=0;
     private int stars=5;
+    private boolean win = false;
 
     public Stage1 (ArkanoidGK game){
         this.game = game;
@@ -132,9 +133,19 @@ public class Stage1 implements Screen {
             }
         }
         if(blocks.size()== blocks_toremove.size()){
+            win = true;
             this.dispose();
             game.setScreen(new WinScreen(game, points, stars,1));
         }
+        /*
+        * Jezeli niema juz pilek  zapasie i na planszy
+        * PRZEGRANA
+        * */
+        if(balls.size()==0 && stars==0 && !win){
+            this.dispose();
+            game.setScreen(new UlooseScreen(game, points, stars,1));
+        }
+
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
         * blocks.removeAll(blocks_toremove);
