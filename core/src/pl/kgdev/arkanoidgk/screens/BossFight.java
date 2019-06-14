@@ -11,6 +11,7 @@ import pl.kgdev.arkanoidgk.elements.Bullet;
 import pl.kgdev.arkanoidgk.elements.Paddle;
 import pl.kgdev.arkanoidgk.eventscollisions.BlackHole;
 import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
+import pl.kgdev.arkanoidgk.mobs.Boss;
 import pl.kgdev.arkanoidgk.mobs.SpacePig;
 import pl.kgdev.arkanoidgk.walls.Block;
 import pl.kgdev.arkanoidgk.walls.BlocksArrayCreaor;
@@ -46,14 +47,16 @@ public class BossFight implements Screen {
     private int ammo;
     private BlackHole blackHole;
     private boolean win = false;
+    private Boss boss;
 
     public BossFight(ArkanoidGK game, int points, int stars){
         this.game = game;
         this.points = points;
         this.stars += stars;
+        this.boss = new Boss(ArkanoidGK.WIDTH/2, ArkanoidGK.WIDTH/2,450, balls, boomholder);
         pad = new Paddle(ArkanoidGK.WIDTH/2,50,450);
         pad.setSkin(2);
-//        balls.add(new Ball(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2, 250));
+
         music.loop(30);
     }
 
@@ -81,13 +84,7 @@ public class BossFight implements Screen {
             }
             //z paletka
             if(ball.getCollisionRect().collidesWith(pad.getCollisionRect())){
-                if(ball.getY() > pad.getY()+pad.getHeight()){
-                    ball.reverseYdir();
-                }
-                    hitpad.play();
-                if(ball.getY() < pad.getY()+pad.getHeight()){
-                    ball.reverseXdir();
-                }
+                ball.
             }
             ball.move();
         }

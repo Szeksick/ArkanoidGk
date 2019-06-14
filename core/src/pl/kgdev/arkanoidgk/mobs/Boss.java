@@ -6,16 +6,17 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import pl.kgdev.arkanoidgk.ArkanoidGK;
+import pl.kgdev.arkanoidgk.elements.Ball;
 import pl.kgdev.arkanoidgk.eventscollisions.CollisionRect;
+import pl.kgdev.arkanoidgk.eventscollisions.Explosion;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Boss extends Image {
     private static float SPEED = 150;
     private static final float SPEED_ANIMATION = 0.5f;
-    private static final int PIXEL_WIDTH = 64;
-    private static final int PIXEL_HEIGHT = 64;
-    Texture texture = new Texture("gosciu.png");
+    Texture texture = new Texture("ufo.png");
     private final int WIDTH = texture.getWidth();
     private final int HEIGHT = texture.getHeight();
     private int move;
@@ -31,12 +32,16 @@ public class Boss extends Image {
     private int moveDirection;
     private boolean remove = false;
     private int HIT_POINTS = 500;
+    ArrayList<Ball> balls;
+    ArrayList<Explosion> boomholder;
 
 
-    public Boss(float x, float y, int speed){
+    public Boss(float x, float y, int speed, ArrayList<Ball> balls, ArrayList<Explosion> boomholder){
         this.x = x;
         this.y = y;
+        this.balls = balls;
         this.SPEED = speed;
+        this.boomholder = boomholder;
         this.x = 50*Math.round(x/50);
         this.y = 50*Math.round(y/50);
         this.rect = new CollisionRect(this.x,this.y,WIDTH, HEIGHT);
@@ -53,8 +58,8 @@ public class Boss extends Image {
     public void direction(){
         MOVE_TIMER++;
         if(MOVE_TIMER >= 20) {
-            moveDirection = new Random().nextInt(4)+1;
-            MOVE_TIMER = 1;
+            moveDirection = new Random().nextInt(3)+1;
+            MOVE_TIMER = 10;
         }
     }
     public void reverse(){
@@ -102,10 +107,9 @@ public class Boss extends Image {
 
     private void ruch() {
         this.direction();
-        if(moveDirection == 1 && this.y < ArkanoidGK.HEIGHT-HEIGHT)this.moveUp();
-        if(moveDirection == 2 && this.y > HEIGHT+200) this.moveDown();
-        if(moveDirection == 3 && this.x > WIDTH) this.moveLeft();
-        if(moveDirection == 4 && this.x < ArkanoidGK.WIDTH-WIDTH) this.moveRight();
+        if(moveDirection == 1 && this.x > WIDTH) this.moveLeft();
+        if(moveDirection == 2 && this.x < ArkanoidGK.WIDTH-WIDTH) this.moveRight();
+        if(moveDirection == 3 && this.y < ArkanoidGK.HEIGHT-HEIGHT) balls.add(new Ball(this.x+(this.WIDTH/2),this.y));
     }
 
     public void render(SpriteBatch batch) {
@@ -129,21 +133,26 @@ public class Boss extends Image {
     public CollisionRect getCollisionRect(){
         return rect;
     }
-    private void dead() {
-        remove = true;
+
+    private void explode(ArrayList<Explosion> boomholder){
+        boomholder.add(new Explosion(this.x+(this.WIDTH/2),this.y+(this.HEIGHT/2)));
+    }
+    private void dead(ArrayList<Explosion> boomholder) {
+        moveDown();
+        explode(boomholder);
     }
     public void gethit(){
         HIT_POINTS--;
     }
 
-    public void update() {
+    public void update(ArrayList<Explosion> boomholder) {
         ruch();
         rect.move(this.x, this.y);
         RIGHT_BLOCKED = false;
         LEFT_BLOCKED = false;
         UP_BLOCKED = false;
         DOWN_BLOCKED = false;
-        if(this.HIT_POINTS <=0) dead();
+        if(this.HIT_POINTS <=0) dead(boomholder);
     }
 }
 
