@@ -17,8 +17,8 @@ public class Boss extends Image {
     private static float SPEED = 150;
     private static final float SPEED_ANIMATION = 0.5f;
     Texture texture = new Texture("ufo.png");
-    private final int WIDTH = texture.getWidth();
-    private final int HEIGHT = texture.getHeight();
+    private final int WIDTH = texture.getWidth()/6;
+    private final int HEIGHT = texture.getHeight()/6;
     private int move;
     private float x , y;
     private float stateTime;
@@ -34,6 +34,8 @@ public class Boss extends Image {
     private int HIT_POINTS = 500;
     ArrayList<Ball> balls;
     ArrayList<Explosion> boomholder;
+    public static final float BOOM_WAIT_TIMER = 0.9f;
+    private float boom_timer;
 
 
     public Boss(float x, float y, int speed, ArrayList<Ball> balls, ArrayList<Explosion> boomholder){
@@ -109,12 +111,17 @@ public class Boss extends Image {
         this.direction();
         if(moveDirection == 1 && this.x > WIDTH) this.moveLeft();
         if(moveDirection == 2 && this.x < ArkanoidGK.WIDTH-WIDTH) this.moveRight();
-        if(moveDirection == 3 && this.y < ArkanoidGK.HEIGHT-HEIGHT) balls.add(new Ball(this.x+(this.WIDTH/2),this.y));
+        if(moveDirection == 3 && this.y < ArkanoidGK.HEIGHT-HEIGHT){
+            if(boom_timer >= BOOM_WAIT_TIMER){
+                balls.add(new Ball(this.x+(this.WIDTH/2),this.y));
+            }
+            boom_timer += delta;
+        }
     }
 
     public void render(SpriteBatch batch) {
 //        batch.draw((TextureRegion) moves[move].getKeyFrame(stateTime,true),x,y,WIDTH+10,HEIGHT+10);
-        batch.draw(texture,x,y,texture.getWidth(),texture.getHeight());
+        batch.draw(texture,x,y,WIDTH,HEIGHT);
     }
     public float getX(){
         return x;
@@ -137,22 +144,22 @@ public class Boss extends Image {
     private void explode(ArrayList<Explosion> boomholder){
         boomholder.add(new Explosion(this.x+(this.WIDTH/2),this.y+(this.HEIGHT/2)));
     }
-    private void dead(ArrayList<Explosion> boomholder) {
+    private void dead() {
         moveDown();
-        explode(boomholder);
+        explode(this.boomholder);
     }
     public void gethit(){
         HIT_POINTS--;
     }
 
-    public void update(ArrayList<Explosion> boomholder) {
+    public void update() {
         ruch();
         rect.move(this.x, this.y);
         RIGHT_BLOCKED = false;
         LEFT_BLOCKED = false;
         UP_BLOCKED = false;
         DOWN_BLOCKED = false;
-        if(this.HIT_POINTS <=0) dead(boomholder);
+        if(this.HIT_POINTS <=0 && this.y > -HEIGHT) dead();
     }
 }
 

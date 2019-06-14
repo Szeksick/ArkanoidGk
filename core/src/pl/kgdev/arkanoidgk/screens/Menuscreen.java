@@ -85,7 +85,7 @@ public class Menuscreen implements Screen {
                 if(Gdx.input.isTouched()){
                     click.play();
                     this.dispose();
-                    game.setScreen(new StatsScreen(game));
+                    game.setScreen(new StatsScreen(game,0,0,999));
                     music.stop();
                 }
             }else if(Gdx.input.getY() > ArkanoidGK.HEIGHT-PLAYBUTTON_Y-BUTTON_HEIGHT&& Gdx.input.getY() < ArkanoidGK.HEIGHT-PLAYBUTTON_Y){

@@ -41,10 +41,10 @@ public class UlooseScreen implements Screen {
         this.endedstage = endedstage;
         pad = new Texture("pad1.png");
         logo = new Texture("pepe.png");
-        playButonActive = new Texture("START.png");
-        playButtonInacitve= new Texture("START-1.png");
-        statsButtonActive = new Texture("Jeszcze raz-1.png");
-        statsButtonInactive = new Texture("Jeszcze raz.png");
+        playButonActive = new Texture("Jeszcze raz-1.png");
+        playButtonInacitve= new Texture("Jeszcze raz.png");
+        statsButtonActive = new Texture("START.png");
+        statsButtonInactive = new Texture("START-1.png");
         exitButtonActive = new Texture("wyjscie.png");
         exitButtonInactive = new Texture("wyjscie-1.png");
         background = new Texture("menubg.jpeg");
@@ -104,6 +104,8 @@ public class UlooseScreen implements Screen {
                         case 3: game.setScreen(new Stage3(game, 0, 0));
                         break;
                         case 4: game.setScreen(new FinalStage(game, 0, 0));
+                        break;
+                        case 5: game.setScreen(new FinalStage(game, 0, 0));
                         break;
                     }
                     music.stop();

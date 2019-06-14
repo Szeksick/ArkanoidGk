@@ -49,6 +49,7 @@ public class BossFight implements Screen {
     private boolean win = false;
     private Boss boss;
 
+
     public BossFight(ArkanoidGK game, int points, int stars){
         this.game = game;
         this.points = points;
@@ -68,23 +69,10 @@ public class BossFight implements Screen {
     public void render(float delta) {
             //kolizje piłki
             for(Ball ball:balls){
-            //z blokami
-            for(Block block:blocks){
-                 if(ball.getCollisionRect().collidesWith(block.getCollisionRect())) {
-                    block.gethit();
-                    points++;
-                    if (ball.getY()+ball.getHeight() < block.getY() || ball.getY() > block.getY()+block.getHeight()) {
-                         ball.reverseYdir();
-                    }
-                    hitblock.play();
-                    if (ball.getX() < block.getX() || ball.getX() > block.getX()+block.getWidth()) {
-                        ball.reverseXdir();
-                    }
-                }
-            }
-            //z paletka
+                //z paletka
             if(ball.getCollisionRect().collidesWith(pad.getCollisionRect())){
-                ball.
+                boomholder.add(new Explosion(ball.getX(),ball.getY()));
+                stars--;
             }
             ball.move();
         }
@@ -129,6 +117,11 @@ public class BossFight implements Screen {
                     shot.gethit();
                 }
             }
+            if(shot.getCollisionRect().collidesWith(boss.getCollisionRect())){
+                boss.gethit();
+                shot.gethit();
+                boomholder.add(new Explosion(boss.getX(),boss.getY()));
+            }
             if(shot.remove) {
                 bullets_toremove.add(shot);
             }
@@ -171,52 +164,24 @@ public class BossFight implements Screen {
         * Jezeli na planszy pozostanie 6 blokow to uwolnione zostają kosmiczne swinie
         * Agresywan rasa ufo ktora latajac haotycznie sporbuje ukrasc pozostale na statku gwiazdy
         */
-        if(blocks.size()<= blocks_toremove.size()+15){
-            allow_pigs = true;
-        }
-        if(allow_pigs && !pigs_relased){
-            blackHole = new BlackHole(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2);
-            for(int i =0; i <200;i++ ) pigs.add(new SpacePig(ArkanoidGK.WIDTH/2, ArkanoidGK.HEIGHT/2));
-            pigs_spawn.play();
-            pigs_relased = true;
-        }
-        if(pigs_relased)blackHole.update(delta);
-        ArrayList<SpacePig> pigs_toremove = new ArrayList<SpacePig>();
-        for(SpacePig pig: pigs){
-            pig.update();
-
-            for(Ball ball:balls){
-                if(pig.getCollisionRect().collidesWith(ball.getCollisionRect())){
-                    balls_toremove.add(ball);
-                }
-            }
-            for(Block block:blocks){
-                if(pig.getCollisionRect().collidesWith(block.getCollisionRect())){
-                    pig.reverse();
-                }
-            }
-            if(pig.remove) {
-                pigs_toremove.add(pig);
-            }
-        }
-        if(pigs.size()== 0 && pigs_relased){
+        if(boss.getY()<0){
             win = true;
             this.dispose();
-            game.setScreen(new PreBossScreen(game, points, stars,4));
+            game.setScreen(new Menuscreen(game));
         }
         /*
          * Jezeli niema juz pilek  zapasie i na planszy
          * PRZEGRANA
          * */
-        if(balls.size()==0 && stars==0 && !win && pigs_relased && pigs.size()==0){
+        if(stars<=0 && !win){
             this.dispose();
             game.setScreen(new UlooseScreen(game, points, stars,4));
         }
+        boss.update();
         /*
         * Nie odkryłem dla czego ale w przydapdku blokow usuwana jest cała kolekcja
         * blocks.removeAll(blocks_toremove);
         */
-        pigs.removeAll(pigs_toremove);
         balls.removeAll(balls_toremove);
         boomholder.removeAll(exploend);
         //Czyszczenie ekranu
@@ -226,17 +191,12 @@ public class BossFight implements Screen {
         game.batch.begin();
         game.batch.draw(background,0,0,ArkanoidGK.WIDTH, ArkanoidGK.HEIGHT);
         pad.render(this.game.batch);
-//        if(balls.size()==0 && !pigs_relased){
-//            game.font.setColor(Color.WHITE);
-//            game.font.draw(game.batch,"Aby stworzyć nowa gwiazdę wciśnij X",(ArkanoidGK.WIDTH/2)-100,ArkanoidGK.HEIGHT/2);
-//        }
+        boss.render(this.game.batch);
         for(Ball ball:balls) ball.render(this.game.batch);
-        for(SpacePig pig:pigs) pig.render(this.game.batch);
-        for(Block block:blocks) block.render(this.game.batch);
         for(Bullet shot:bullets) shot.render(this.game.batch);
         for(Explosion boom: boomholder) boom.render(this.game.batch);
         if(pigs_relased && !blackHole.remove) blackHole.render(this.game.batch);
-        kokpit.draw(this.game,3,points, stars);
+        kokpit.draw(this.game,5,points, stars);
         game.batch.end();
 
     }

@@ -79,8 +79,8 @@ public class Stage1 implements Screen {
 
         //CHEATY
         if(Gdx.input.isKeyJustPressed(M)){
-            this.dispose();
-            game.setScreen(new Stage2(game, points, stars));
+            game.setScreen(new BossFight(game, points, stars));
+                this.dispose();
         }else if(Gdx.input.isKeyJustPressed(N)){
             this.dispose();
             game.setScreen(new Stage3(game, points, stars));
