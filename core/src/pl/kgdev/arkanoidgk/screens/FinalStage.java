@@ -205,7 +205,7 @@ public class FinalStage implements Screen {
         if(pigs.size()== 0 && pigs_relased){
             win = true;
             this.dispose();
-            game.setScreen(new WinScreen(game, points, stars,4));
+            game.setScreen(new PreBossScreen(game, points, stars,4));
         }
         /*
          * Jezeli niema juz pilek  zapasie i na planszy

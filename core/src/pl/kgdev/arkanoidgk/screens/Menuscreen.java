@@ -95,7 +95,7 @@ public class Menuscreen implements Screen {
                 if(Gdx.input.isTouched()){
                     click.play();
                     this.dispose();
-                    game.setScreen(new Stage1(game));
+                    game.setScreen(new UserManualScreen(game));
                     music.stop();
                 }
             }
